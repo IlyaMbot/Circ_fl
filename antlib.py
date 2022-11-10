@@ -263,4 +263,3 @@ def get_filenames(path) -> list:
     
     return(filenames)
 
-

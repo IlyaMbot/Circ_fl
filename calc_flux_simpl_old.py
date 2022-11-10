@@ -43,7 +43,7 @@ xticks = []
 
 #get-all_filenames-from-dir----------------------------------------------------------
 
-filenames = glob.glob('./sandbox*/pictures/decay/*.fits')
+filenames = glob.glob('./images_fits/decay/*.fits')
 filenames = sorted(filenames, key=os.path.basename)
 
 for i in range(len(filenames)):

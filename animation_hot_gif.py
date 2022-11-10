@@ -29,6 +29,7 @@ for i in range(startf, endf):
                 delt_pix_I = [f[0].header["CDELT1"], f[0].header["CDELT2"]]
                 centre_I  = [259, 255]
 
+        imgI = imgI / np.max(imgI) * 100
         shiftx = - 20
         shifty = 7
         extentI = [ -centre_I[0] * delt_pix_I[0], centre_I[0] * delt_pix_I[0], -centre_I[1] * delt_pix_I[1] , centre_I[1] * delt_pix_I[1] ]
@@ -41,14 +42,15 @@ for i in range(startf, endf):
 
         # levelsI = np.array( [imgI1.max()/ 100 * i for i in range(beg, 100, step)] )
         
-        title = ax.text(0.5,1.05,f"SRH I, time 06:16:{27 + i * timestep:.2f} UT", size = size *1.5, ha="center", transform=ax.transAxes )
-        im = plt.imshow(imgI, cmap = 'hot', origin = "lower", extent = extentI, norm = colors.Normalize(vmin=-500, vmax=8000), animated = True)
+        title = ax.text(0.5,1.05,f"SRH I, time 06:16:{27 + i * timestep:.2f} UT", size = size *1.2, ha="center", transform=ax.transAxes, weight = "bold")
+        im = plt.imshow(imgI, cmap = 'hot', origin = "lower", extent = extentI, norm = colors.Normalize(vmin = -10, vmax = 100), animated = True)
         images.append([im, title])
 
 
 
-plt.xlabel("Helioprojective Longtitude, [arcsec]", size = size)
-plt.ylabel("Helioprojective Latitude, [arcsec]", size = size)
+plt.xlabel("Helioprojective Longtitude, [arcsec]", size = size * 1.1, weight = "bold")
+plt.ylabel("Helioprojective Latitude, [arcsec]", size = size* 1.1 , weight = "bold")
+ax.tick_params(axis='both', labelsize = size)
 plt.grid()
 plt.axis([-550, -250, 250, 500])
 plt.colorbar()

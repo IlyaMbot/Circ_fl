@@ -1,5 +1,6 @@
 from astropy.io import fits
 import numpy as np
+import antlib
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 import matplotlib.animation as anime
@@ -11,13 +12,12 @@ endf = 20
 
 #-----------------------------------------------------------------------------
 
-fig, ax = plt.subplots(figsize = (8,6))
-images = []
+antlib.makedir("animation")
 
 #Read-I-files-----------------------------------------------------------
 for i in range(startf, endf):
 
-        filenames = glob.glob(f'./sandbox*/pictures/061653IV/*{i}_I.fits')
+        filenames = glob.glob(f'./images_fits/061653IV/*{i}_I.fits')
         filenames = sorted(filenames, key=os.path.basename)
 
         frame = int(filenames[0][-9:-7])
@@ -31,7 +31,7 @@ for i in range(startf, endf):
 
         '''///'''
         
-        filenames = glob.glob(f'./sandbox*/pictures/061653IV/*{frame - 1}_I.fits')
+        filenames = glob.glob(f'./images_fits/061653IV/*{frame - 1}_I.fits')
 
         filenames = sorted(filenames, key=os.path.basename)
 
@@ -54,20 +54,18 @@ for i in range(startf, endf):
         size = 16
 
         # levelsI = np.array( [imgI1.max()/ 100 * i for i in range(beg, 100, step)] )
-
+        
+        fig, ax = plt.subplots(figsize = (8,6))
         title = ax.text(0.5,1.05,f"SRH I (difference), time 06:16:{27 + i * timestep:.2f} UT", size = size *1.2, ha="center", transform=ax.transAxes, weight = "bold")
-        img = plt.imshow(imgI, cmap = 'seismic', origin = "lower", extent = extentI, norm = colors.Normalize(vmin = -1, vmax = 1))
-        images.append([img, title])
+        plt.imshow(imgI, cmap = 'seismic', origin = "lower", extent = extentI, norm = colors.Normalize(vmin = -1, vmax = 1))
+        plt.xlabel("Helioprojective Longtitude, [arcsec]", size = size * 1.1, weight = "bold")
+        plt.ylabel("Helioprojective Latitude, [arcsec]", size = size* 1.1 , weight = "bold")
+        ax.tick_params(axis='both', labelsize = size)
+        plt.grid()
+        plt.axis([-550, -250, 250, 500])
+        plt.colorbar()
+        plt.tight_layout()
+        plt.savefig(f"./animation/SRH_diff_{i}.png", transparent = False, dpi = 400, bbox_inches = "tight")
 
 
 
-plt.xlabel("Helioprojective Longtitude, [arcsec]", size = size * 1.1, weight = "bold")
-plt.ylabel("Helioprojective Latitude, [arcsec]", size = size* 1.1 , weight = "bold")
-ax.tick_params(axis='both', labelsize = size)
-plt.grid()
-plt.axis([-550, -250, 250, 500])
-plt.colorbar()
-plt.tight_layout()
-
-ani = anime.ArtistAnimation(fig, images, interval = 1000, repeat = True, blit = False)
-ani.save("flare_diff.gif")

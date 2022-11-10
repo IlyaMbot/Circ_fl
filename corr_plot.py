@@ -2,7 +2,6 @@ from astropy.io import fits
 import matplotlib.pyplot as plt
 import numpy as np
 import os, glob
-import antlib
 
 filename = glob.glob('./fluxes/2021_05_22*.fits')
 filename = sorted(filename, key=os.path.basename)

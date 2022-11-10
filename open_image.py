@@ -12,12 +12,13 @@ def open_AIA_fits(filename):
             delta = [f[0].header["CDELT1"], f[0].header["CDELT2"]]
             centre   = [f[0].header["CRPIX1"], f[0].header["CRPIX2"]]
             t_obs = f[0].header["T_OBS"]
+            t_obs = t_obs.split('T')[-1]
         
     return(img, size, delta, centre, t_obs[:-1])
 
 filename1 = glob.glob(f'./sandbox*/pictures/061653IV/*18_I.fits')
 filename2 = glob.glob(f'./sandbox*/pictures/061653IV/*19_I.fits')
-filename3 = glob.glob(f'./sandbox*/pictures/061653IV/*0_I.fits')
+filename3 = glob.glob(f'./sandbox*/pictures/061653IV/*00_I.fits')
 
 with fits.open(filename1[0], memmap = True) as f:
                 f.verify('silentfix')
@@ -44,6 +45,7 @@ imgI3[imgI3 < 0] = 0
 imgI = imgI1 - imgI2 
 imgI[ imgI < 0 ] = 0
 imgI = imgI / np.max(imgI) * 100
+imgI3 = imgI3 / np.max(imgI3) * 100
 
 filenames = ["AIA_ref_jp2/aia.lev1.94A_2021-05-22T06 16 47.12Z.image_lev1.fits", 
             "AIA_ref_jp2/aia.lev1.131A_2021-05-22T06 16 42.62Z.image_lev1.fits",
@@ -75,12 +77,12 @@ for i in range(len(filenames)):
     plt.xlabel("Helioprojective Longtitude, [arcsec]", size = size * 1.1, weight = "bold")
     plt.ylabel("Helioprojective Latitude, [arcsec]", size = size* 1.1 , weight = "bold")
     ax.tick_params(axis='both', labelsize = size)
-    plt.imshow(imgAIA, cmap = 'hot', origin = "lower", extent = extent_AIA, norm = colors.PowerNorm(gamma=0.25, vmin = 0, vmax = 8000))
-    ax.text(0.5,1.05,f"AIA {freq}$\AA$ {t_obs}", size = size *1.2, ha="center", transform=ax.transAxes, weight = "bold")
+    plt.imshow(imgAIA, cmap = 'hot', origin = "lower", extent = extent_AIA, norm = colors.PowerNorm(gamma=0.25, vmin = 0, vmax = np.max(imgAIA)))
+    ax.text(0.5,1.05,f"SRH I & AIA {freq}$\AA$, time {t_obs} UT", size = size *1.2, ha="center", transform=ax.transAxes, weight = "bold")
     # plt.colorbar()
     
-    CS1 = plt.contour(imgI, levelsI, colors = [(0, 0, 1 - j/255) for j in range(50, 255, 20)], origin = "lower", extent = extentI)
-    CS2 = plt.contour(imgI3, levelsI, colors = [(0, 1 - j/255, 0) for j in range(50, 255, 20)], origin = "lower", extent = extentI)
+    # CS1 = plt.contour(imgI, levelsI, colors = [(0, 0, 1 - j/255) for j in range(50, 255, 20)], origin = "lower", extent = extentI)
+    CS2 = plt.contour(imgI3, levelsI, colors = [(0, 0, 1 - j/255) for j in range(50, 255, 20)], origin = "lower", extent = extentI)
     
     # for j in range(len(levelsI)): 
         # CS1.collections[j].set_label(f"I, {levelsI[j]}%" + "$I_{max}$")
@@ -91,5 +93,5 @@ for i in range(len(filenames)):
     # plt.axis([-1000, 1000, -1000, 1000])
     plt.tight_layout()
     # plt.legend(loc = 'upper left')
-    plt.savefig(f"./{t_obs}_{freq}_AIA.png", transparent = False, dpi = 400, bbox_inches = "tight")
+    plt.savefig(f"./{t_obs}_{freq}_AIA_2.png", transparent = False, dpi = 400, bbox_inches = "tight")
     
